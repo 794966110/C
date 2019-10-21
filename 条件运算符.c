@@ -21,3 +21,16 @@ void main()
 	ch=(ch>='A'&&ch<='Z')?(ch+32):ch;
 	printf("%c\n",ch);
 } 
+
+
+#include<stdio.h>
+
+void main()
+
+{
+	char ch;
+	scanf("%c",&ch);
+
+	getchar();
+	printf("%c\n",ch>90?ch:ch+32);
+} 
