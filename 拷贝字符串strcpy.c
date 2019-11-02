@@ -18,3 +18,24 @@ int main()
 
    return 0;
 }
+
+
+
+
+#include<stdio.h>
+#include<string.h>
+
+
+
+int main()
+{
+   char str1[]="To be or not to be";
+   char str2[40];
+
+   strcpy(str2,str1);
+   str2[5]='\0';
+   printf("%s",str2);
+
+
+   return 0;
+}
