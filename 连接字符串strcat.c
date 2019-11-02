@@ -2,7 +2,7 @@
 #include<string.h>
 
 
-#define NUM 10
+
 int main()
 {
    char str1[]="I love";
