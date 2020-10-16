@@ -1,0 +1,197 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define TRUE 1
+#define FALSE 0
+#define OK 1
+#define ERROR 0
+#define INFEASIBLE -1
+#define OVERFLOW -2
+#define Listinitsize 100
+#define listincremet 10
+
+
+typedef struct {
+	int* elem;
+	int length;//当前表长
+	int listsize;//当前分配的储存容量
+}sqlist;
+
+int InitList_Sq(sqlist* L)
+{
+	L->elem = (int*)malloc(Listinitsize * sizeof(int));
+	if (!L->elem)
+	{
+		exit(OVERFLOW);
+	}
+	L->length = 0;
+	L->listsize = Listinitsize;
+	return OK;
+}
+
+int destory(sqlist* L)
+{
+	free(L);
+}
+int empty(sqlist L)
+{
+	if (!L.elem)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+int clearlist(sqlist* L)
+{
+	/*初始条件：线性表L已存在。
+		操作结果：将L重置为空表。*/
+	L->length = 0;
+	return OK;
+}
+
+int listlength(sqlist L)
+{
+	return L.length;
+}
+
+int GetElem_Sq(sqlist L, int i, int* e)
+{
+	if (L.length = 0 || i<1 || i>L.length)
+	{
+		return ERROR;
+	}
+	*e = L.elem[i - 1];
+	return OK;
+}
+
+int compare(int e1,int e2)
+{
+	if (e1 = e2)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
+int locatelem(sqlist L, int e, int (*compare)(int ,int ))
+{
+	int i = 1;
+	int* p = L.elem;
+	while (i<=L.length&&!(*compare)(*p++,e))
+	{
+		++i;
+	}
+	if (i <= L.length)
+	{
+		return i;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int priorelem(sqlist L,int cur_e,int *pre_e)
+{
+	for (int i = 0;i < L.length;i++)
+	{
+		if (cur_e == L.elem[i]&&cur_e!=L.elem[0])
+		{
+			*pre_e = L.elem[i - 1];
+			return OK;
+		}
+		else
+		{
+			return ERROR;
+		}
+	}
+	
+}
+int nextelem(sqlist L, int cur_e, int* next_e)
+{
+	for (int i = 0;i < L.length;i++)
+	{
+		if (cur_e == L.elem[i] && cur_e != L.elem[L.length - 1])
+		{
+			*next_e = L.elem[i + 1];
+			return OK;
+		}
+		else
+		{
+			return ERROR;
+		}
+	}
+	
+}
+
+int ListInsert_Sq(sqlist* L, int i, int e)
+{
+	int j;
+	if (i<1 || i>L->length + 1||L->listsize==0)
+	{
+		return ERROR;
+	}
+	i--;
+	for (j = L->length ;j >i;j--)
+	{
+		L->elem[j] = L->elem[j-1];
+	}
+	L->elem[i]=e;
+	L->length += 1;
+	return OK;
+}
+
+int ListDelete_Sq(sqlist* L, int i, int* e)
+{
+	int j;
+	if (i<1 || i>L->length + 1||L->listsize==0)
+	{
+		return ERROR;
+	}
+	i--;
+	for (j = L->length - 1;j >= i;j--)
+	{
+		L->elem[j - 1] = L->elem[j];
+	}
+	L->length--;
+}
+
+
+int main()
+{
+	printf("Hello, World!\n");
+	sqlist L;
+	printf("即将构建一个空的线性表...");
+	InitList_Sq(&L);
+	printf("\n构建成功");
+
+	int i;
+	printf("请输入要插入的元素数目：");
+	scanf_s("%d", &i);
+	int j;
+	int e;
+	for (j = 0;j < i;j++) {
+		printf("请输入要插入的第%d个值：", j + 1);
+		scanf_s("%d", &e);
+		ListInsert_Sq(&L, j + 1, e);
+	}
+
+	printf("\n输出线性表中所有元素：");
+	for (i = 0;i < L.length;i++) {
+		GetElem_Sq(L, i + 1, &e);
+		printf("%d ", e);
+	}
+
+	printf("\n请输入要删除的元素位置：");
+	scanf_s("%d", &i);
+	ListDelete_Sq(&L, i, &e);
+	printf("\n删除成功，删除了第%d个元素，元素值为%d", i, e);
+
+	printf("\n输出线性表中所有元素：");
+	for (i = 0;i < L.length;i++) {
+		GetElem_Sq(L, i + 1, &e);
+		printf("%d ", e);
+	}
+}
