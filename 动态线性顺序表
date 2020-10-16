@@ -146,15 +146,17 @@ int ListInsert_Sq(sqlist* L, int i, int e)
 int ListDelete_Sq(sqlist* L, int i, int* e)
 {
 	int j;
-	if (i<1 || i>L->length + 1||L->listsize==0)
+	if (i<1 || i>L->length ||L->listsize==0)
 	{
 		return ERROR;
 	}
 	i--;
-	for (j = L->length - 1;j >= i;j--)
+	*e = L->elem[i];
+	for (j = L->length;j > i;j--)
 	{
 		L->elem[j - 1] = L->elem[j];
 	}
+	
 	L->length--;
 }
 
