@@ -1,0 +1,141 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+typedef struct LNode
+{
+	int data;
+	struct LNode* prior;
+	struct LNode* next;
+}*DLinkNode,DNode;
+
+void listinit(DLinkNode L)
+{
+	L = (DLinkNode)malloc(sizeof(DNode));
+	if (L)
+	{
+		L->next =L->prior= NULL;
+	}
+}
+
+//void createlistHead(DLinkNode L,int a[],int n )
+//{
+//	int i;DLinkNode s;
+//	L->prior = L->next = NULL;
+//	for (i = 0;i < n;i++)
+//	{
+//		s = (DLinkNode)malloc(sizeof(DNode));
+//		s->data = a[i];
+//		s->next = L->next;
+//		if (L->next != NULL)
+//		{
+//			L->next->prior = s;
+//		}
+//		L->next = s;
+//		s->prior = L;
+//	}
+//}
+
+bool listinsert(DLinkNode L,int i,int e)
+{
+	int j = 0;
+	DLinkNode p = L;
+	DLinkNode s;
+	while (j<i-1&&p!=NULL)//查找第i-1个节点
+	{
+		j++;
+		p = p->next;
+	}
+	if (p == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		s = (DLinkNode)malloc(sizeof(DNode));
+		s->data = e;
+		s->next = p->next;
+		if (p->next!=NULL)
+		{
+			p->next->prior = s;
+			p->next = s;
+			s->prior = p;
+		}
+	}
+}
+
+void listdelete(DLinkNode L, int i)
+{
+	int j = 0;
+	DLinkNode p = L;
+	DLinkNode s,q;
+	while (j < i - 1 && p != NULL)//查找第i-1个节点
+	{
+		j++;
+		p = p->next;
+	}
+	if (p == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		q = p->next;
+		if (q == NULL)
+		{
+			return false;
+		}
+		p->next = q->next;
+		if (q->next != NULL) {
+			q->next->prior = p;
+		}
+		free(q);
+		return true;
+	}
+}
+
+void createlistTail(DLinkNode L,int a[],int n)
+{
+	DLinkNode s;DLinkNode p;
+	L->prior = L->prior = NULL;
+	p = L;
+	for (int i = 0;i < n;i++)
+	{
+		s = (DLinkNode)malloc(sizeof(DNode));
+		s->data = a[i];
+		s->next = NULL;
+		p->next = s;
+		s->prior = p;
+		p = p->next;
+	}
+	
+}
+
+void display(DLinkNode L)
+{
+	while (L->next->data)
+	{
+		printf("%d ", L->next->data);
+		L = L->next;
+	}
+}
+int main()
+{
+	DLinkNode* head;
+	int a[] = { 1,2,3,4,5,6,7,8,9 };
+	int n = sizeof(a) / sizeof(int);//数组长度
+	head = (DLinkNode)malloc(sizeof(DNode));
+	listinit(head);//初始化
+	//createlistHead(head,a,n);//头插法
+	createlistTail(head, a, n);//尾插法
+	int i = 5;int e=15;
+	listinsert(head, i, e);//在第i个节点的位置上插入e值
+	i = 7;
+	listdelete(head, i);//删除第i位的值
+	
+
+
+
+	display(head);//输出head
+	return 0;
+}
