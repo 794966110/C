@@ -1,0 +1,290 @@
+
+//假设有一个带头结点的单链表L=（a1，b1，a2，b2，…，an，bn）。设计一个算法将其拆分成两个带头结点的单链表L1和L2：
+//L1=（a1，a2，…，an），L2=（bn，bn-1，…，b1）
+//利用原单链表L中的所有结点通过改变指针域重组成单链表L1和L2。
+//由于L1中结点的相对顺序与L中的相同，所以采用尾插法建立单链表L1；
+//由于L2中结点的相对顺序与L中的相反，所以采用头插法建立单链表L2。
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+typedef struct LNode {
+	int date;
+	struct  LNode* next;
+}*LinkNode, Node;
+
+void listinit(LinkNode L)
+{
+	L= (LinkNode)malloc(sizeof(Node));
+	if (L)
+	{
+		L->next = NULL;
+	}
+}
+void listcreate(LinkNode L, int a[], int n)
+{
+	LinkNode s;LinkNode p;
+	
+	p = L;
+	if (L)
+	{
+		L->next = NULL;
+	}
+	
+		for (int i = 0;i < n;i++)
+		{
+			s = (LinkNode)malloc(sizeof(Node));
+			if (s == NULL)
+				{
+					printf("分配内存失败\n");
+				}
+			else {
+				s->date = a[i];
+				s->next = NULL;
+				p->next = s;
+				p = p->next;
+			
+			}
+		}
+	
+}
+
+int listlength(LinkNode L)
+{
+	int n = 0;
+	LinkNode p = L;
+	while (p->next!=NULL)
+	{
+		
+		n++;
+		p = p->next;
+	}
+	return n;
+}
+
+bool listempty(LinkNode L)
+{
+	return (L->next == NULL);
+}
+
+void display(LinkNode L)
+{
+	LinkNode p = L->next;
+	while (p!=NULL)
+	{
+		printf("%d ", p->date);
+		p = p->next;
+	}
+	putchar('\n');
+}
+
+//void getelem(LinkNode L, int i, int* e)
+//{
+//	int k = 0;LinkNode p;
+//	p = L;
+//	for (k = 0;k < i;k++)
+//	{
+//		p = p->next;
+//	}
+//	if (p)
+//	{
+//		*e = p->date;
+//	}
+//}
+
+bool getelem2(LinkNode L,int i,int *e)
+{
+	int j=0;
+	LinkNode p;
+	p = L;
+	while (j<i&&p!=NULL)
+	{
+		j++;
+		p = p->next;
+	}
+	if (p == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		*e = p->date;
+		return  true;
+	}
+}
+
+int locateElem(LinkNode L,int e)
+{
+	LinkNode p;
+	p = L;
+	int i=0;
+	while (p->next != NULL&&p->date!=e)
+	{
+		i++;
+		p = p->next;
+	}
+	return i;
+}
+
+bool listinsert(LinkNode L, int i, int e)//在表中第i位插入e
+{
+	int j = 1;
+	LinkNode s;
+	s = (LinkNode)malloc(sizeof(Node));
+	LinkNode p = L;
+	while (j < i && p!= NULL)
+	{
+		j++;
+		p = p->next;
+	}
+	if (p->next != NULL)
+	{
+		s->date = e;
+		s->next = p->next;
+		p->next = s;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	
+}
+
+bool listdelete(LinkNode L,int i,int *e)
+{
+	int j=1;
+	LinkNode p = L;LinkNode s;
+	while (j < i && p != NULL)
+	{
+		j++;
+		p = p->next;
+	}
+	if (p == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		s = p->next;
+		if (s == NULL)
+		{
+			return false;
+		}
+		*e = s->date;
+		p->next = s->next;
+		free(s);
+		return true;
+	}
+}
+
+//bool chaifen(LinkNode L1,LinkNode L2,int i)
+//{
+//	int j = 0;
+//	LinkNode p = L1;
+//	
+//	while (j<i&&p!=NULL)
+//	{
+//		j++;
+//		p = p->next;
+//	}
+//	
+//	if (p->next == NULL)
+//	{
+//		return false;
+//	}
+//	else
+//	{	
+//		
+//		L2->next = p->next;
+//		p->next = NULL;
+//		return true;
+//	}
+//}
+
+
+void split(LinkNode L,LinkNode L1,LinkNode L2)
+{
+	LinkNode p, q, r1;
+	p = L->next;L1 = L;r1 = L1;
+	
+	//L2 = (LinkNode)malloc(sizeof(Node));
+	L2->next = NULL;
+	
+	while (p->next)
+	{
+		//采用尾插法
+		r1->next = p;
+		r1 = p;
+		//采用头插法t
+		
+			p = p->next;//p后移
+			q = p->next;//q移到p后面
+			p->next = L2->next;
+			L2->next = p;
+			p = q;
+		
+		
+	}
+	r1->next = p;
+	r1 = p;
+	r1->next = NULL;
+	
+}
+void destory(LinkNode L)
+{
+	LinkNode pre = L;LinkNode p = L->next;
+	while (p!= NULL)
+	{
+		free(pre);
+		pre = p;
+		p = p->next;
+	}
+	free(pre);
+	
+}
+
+int main()
+{
+	LinkNode head;
+	head = (LinkNode)malloc(sizeof(Node));
+	listinit(head);
+	int a[] = { 1,2,3,4,5,6,7,8,9 };
+	int n = sizeof(a) / sizeof(int);
+	listcreate(head, a, n);
+	printf("%d\n", listempty(head));
+	printf("长度为%d的表:",listlength(head));
+	display(head);
+	
+	int e;
+	getelem2(head, 3, &e);
+	printf("第3个数据是%d", e);
+	int f = 5;
+	
+	printf("\n第一个%d在第%d位\n", f, locateElem(head,f));
+	f = 6;int x = 15;
+	listinsert(head, f, x);
+	printf("在第%d位插入%d\n", f, x);
+	display(head);
+	e = 6;
+	listdelete(head, 7,&e);
+	display(head);
+
+	LinkNode head1;
+	head1 = (LinkNode)malloc(sizeof(Node));
+	listinit(head1);
+	LinkNode head2;
+	head2 = (LinkNode)malloc(sizeof(Node));
+	listinit(head2);
+	//chaifen(head,head2,5);	
+	split(head, head1, head2);
+	display(head);
+	display(head2);
+
+
+	destory(head);
+	destory(head2);
+	return 0;
+}
