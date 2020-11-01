@@ -1,0 +1,131 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+#define maxsize 50
+typedef struct {
+	double data[maxsize];
+	int top;
+
+}SqStack;
+
+void initstack(SqStack **Opnd)
+{
+	*Opnd = (SqStack*)malloc(sizeof(SqStack));
+	if (*Opnd) {
+		(*Opnd)->top = -1;
+	}
+	
+}
+
+void destory(SqStack* Opnd)
+{
+	free(Opnd);
+}
+
+bool push(SqStack **Opnd,double e)
+{
+	if ((*Opnd)->top == maxsize - 1)
+	{
+		return false;
+	}
+	else
+	{
+		(*Opnd)->top++;
+		(*Opnd)->data[(*Opnd)->top] = e;
+		return true;
+	}
+}
+
+
+bool pop(SqStack  **Opnd, double *e)
+{
+	if ((*Opnd)->top == -1)
+	{
+		return false;
+	}
+	else
+	{
+		*e = (*Opnd)->data[(*Opnd)->top];
+		(*Opnd)->top--;
+		return true;
+	}
+}
+
+bool stackempty(SqStack *Opnd)
+{
+	return (Opnd->top == -1);
+}
+
+bool GetTop(SqStack** Opnd,double *e)
+{
+	if ((*Opnd)->top == -1)
+	{
+		return false;
+	}
+	*e = (*Opnd)->data[(*Opnd)->top];
+	return true;
+}
+
+double trans2(char *postexp)
+{
+	SqStack* Opnd;
+	initstack(&Opnd);
+	double a, b, c, d,e;
+	
+	while (*postexp!='\0')
+	{
+		//printf("%c\n", *postexp);
+		switch (*postexp)
+		{
+		case '+':
+			pop(&Opnd, &a);
+			pop(&Opnd, &b);
+			c = a + b;
+			push(&Opnd, c);
+			break;
+		case '-':
+			pop(&Opnd, &a);
+			pop(&Opnd, &b);
+			c = b-a;
+			push(&Opnd, c);
+			break;
+		case'*':
+			pop(&Opnd, &a);
+			pop(&Opnd, &b);
+			c = a * b;
+			push(&Opnd, c);
+			break;
+		case '/':
+			pop(&Opnd, &a);
+			pop(&Opnd, &b);
+			if (a != 0) {
+				c = (b / a);
+				push(&Opnd, c);
+				break;
+			}
+		default:
+			d = 0;
+			while ((*postexp) >= '0' && (*postexp) <= '9')
+			{
+				d = d * 10 + (*postexp) - '0';
+				*postexp++;
+			}
+			push(&Opnd, d);
+			break;
+		}
+		*postexp++;
+	}
+	GetTop(&Opnd, &e);
+	destory(Opnd);
+	return e;
+}
+
+int main()
+{
+	
+	char  postexp[] = "213+*4-";
+	printf("%s\n", postexp);
+	printf("%g\n", trans2(postexp));
+	return 0;
+}
