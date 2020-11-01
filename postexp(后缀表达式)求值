@@ -113,6 +113,15 @@ double trans2(char *postexp)
 			}
 			push(&Opnd, d);
 			break;
+			/*d = 0;
+			while ((*postexp) >= '0' && (*postexp) <= '9')
+			{
+				//printf("%c\n", *postexp);
+				d = *postexp-'0';
+				push(&Opnd, d);
+				postexp++;
+			}
+			break;*/
 		}
 		*postexp++;
 	}
