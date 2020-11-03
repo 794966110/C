@@ -1,0 +1,161 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#define maxsize 50
+
+int M = 8;int N = 8;
+int mg[10][10] = {
+{1,1,1,1,1,1,1,1,1,1},
+{1,0,0,1,0,0,0,1,0,1},
+{1,0,0,1,0,0,0,1,0,1},
+{1,0,0,0,0,1,1,0,0,1},
+{1,0,1,1,1,0,0,0,0,1},
+{1,0,0,0,1,0,0,0,0,1},
+{1,0,1,0,0,0,1,0,0,1},
+{1,0,1,1,1,0,1,1,0,1},
+{1,1,0,0,0,0,0,0,0,1},
+{1,1,1,1,1,1,1,1,1,1}
+};
+
+typedef struct
+{
+	int i;
+	int j;
+	int di;
+}Box;
+
+typedef struct
+{
+	Box data[maxsize];
+	int top;
+}stType;
+
+
+void initstack(stType **st)
+{
+	*st = (stType*)malloc(sizeof(stType));
+	(*st)->top = -1;
+}
+
+bool stackempty(stType *st)
+{
+	return (st->top == -1);//判断是否栈空
+}
+
+bool push(stType** st,Box e)
+{
+	if ((*st)->top == maxsize - 1)//判断是否栈满
+	{
+		return false;
+	}
+	else {
+		(*st)->data[++(*st)->top] = e;//top先++，再把e进栈
+	}
+	return true;
+}
+
+bool pop(stType** st, Box* e)
+{
+	if ((*st)->top == -1)//判断是否栈空
+	{
+		return false;
+	}
+	else
+	{
+		*e = (*st)->data[(*st)->top--];//先将栈顶元素e出栈，top再减1
+		return true;
+	}
+}
+
+bool getTop(stType* st,Box *e)
+{
+	if (st->top == -1)
+	{
+		return false;
+	}
+	*e = st->data[st->top];
+	return true;
+}
+
+void destory(stType** st)
+{
+	free(*st);
+}
+
+bool mgpath(int xi, int yi, int xe, int ye)//存放路径
+{
+	Box path[maxsize], e;int i, j, di, i1, j1, k;
+	bool find;
+	stType* st;//定义栈st
+	initstack(&st);//初始化
+	e.i = xi;e.j = yi;e.di = -1;//设置e为入口
+	push(&st, e);//方块e进栈
+	mg[xi][yi] = -1;//入口的迷宫值置为-1避免重复
+	while (!stackempty(st))//当栈不空时循环
+	{
+		getTop(st, &e);
+		i = e.i;j = e.j;di = e.di;//将e内的数据取出
+		if (i == xe && j == ye)//找到出口，输出该路径
+		{
+			printf("一条迷宫路径如下\n");
+			k = 0;
+			while (!stackempty(st))
+			{
+				pop(&st, &e);//出栈方块e
+				path[k++] = e;//将e添加到path数组中
+			}
+			while (k >= 1)
+			{
+				k--;
+				printf("\t(%d,%d)", path[k].i, path[k].j);
+				if ((k + 2) % 5 == 0)
+				{
+					printf("\n");
+				}
+			}
+			printf("\n");
+			destory(&st);//销毁栈
+			return true;
+		}
+		find = false;
+		while (di < 4 && !find)
+		{
+			di++;
+			switch (di)
+			{
+			case 0:i1 = i - 1;j1 = j;break;//往左移
+			case 1:i1 = i;j1 = j + 1;break;//往上移
+			case 2:i1 = i + 1;j1 = j;break;//往右移
+			case 3:i1 = i;j1 = j - 1;break;//往下移
+			}
+			if (mg[i1][j1] == 0)find = true;
+		}
+
+			if (find)//找到了一个相邻可走方块（i1，j1）
+			{
+				st->data[st->top].di = di;//修改原栈顶的di值
+				e.i = i1;e.j = j1;e.di = -1;
+				push(&st, e);//相邻可走方块e进栈
+				mg[i1][j1] = -1;//（i1,j1）迷宫值置为-1避免重复
+			}
+			else//没用路径可走退栈
+			{
+				pop(&st, &e);//将方块退栈
+				mg[e.i][e.j] = 0;
+			}
+
+	}
+	destory(&st);
+	return false;//表示没有路径可走
+		
+}
+int main()
+{
+	//mgpath(1, 1, M, N);
+	if (!mgpath(1, 1, M, N))
+	{
+		printf("none answer");
+	}
+	
+	return 1;
+}
