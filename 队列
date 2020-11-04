@@ -1,0 +1,64 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#define maxsize 50
+
+typedef int Elemtype;
+
+typedef struct
+{
+	int data[maxsize];
+	int front, rear;//front下一个元素为队首元素，rear指向队尾元素
+}sqQueue;
+
+void initQueue(sqQueue** q)
+{
+	*q = (sqQueue*)malloc(sizeof(sqQueue));
+	(*q)->front = (*q)->rear = -1;
+}
+
+void destory(sqQueue** q)
+{
+	free(*q);
+}
+
+bool QueueEmpty(sqQueue* q)
+{
+	return (q->front == q->rear);
+}
+
+bool enQueue(sqQueue** q, int e)
+{
+	if ((*q)->rear == maxsize - 1)//如果栈不满时
+	{
+		return false;
+	}
+	(*q)->rear++;//队尾+1
+	(*q)->data[(*q)->rear] = e;//将e放入队尾
+	return true;
+}
+
+bool deQueue(sqQueue** q, int* e)
+{
+	if ((*q)->front == (*q)->rear)//当队列为空时
+	{
+		return false;
+	}
+	(*q)->front++;//队首+1
+	*e=(*q)->data[(*q)->front];//将队首的数值放入e
+	return true;
+}
+
+int main()
+{
+	sqQueue* q;
+	initQueue(&q);//初始化
+	enQueue(&q, 22);enQueue(&q, 21);
+	enQueue(&q, 254);enQueue(&q, 3431);
+	while (q->rear!=maxsize-1&&q->rear!=q->front)
+	{
+		printf("%d\n", q->data[q->front+1]);//输出fornt指向的下一位
+		q->front++;
+	}
+	return 0;
+}
