@@ -1,0 +1,109 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#define maxsize 50
+
+typedef int Elemtype;
+
+typedef struct qNode
+{
+	int data;
+	struct qNode* next;
+}DataNode;
+
+typedef struct
+{
+	DataNode* front;
+	DataNode* rear;
+}LinkquNode;
+
+void initQueue(LinkquNode **q)
+{
+	(*q) = (LinkquNode*)malloc(sizeof(LinkquNode));
+	(*q)->front = (*q)->rear = NULL;//置空
+}
+
+void DestoryQueue(LinkquNode** q)
+{
+	DataNode* p = (*q)->front;DataNode* r;
+	if (p != NULL)
+	{
+		r = p->next;
+		while (r!=NULL)
+		{
+			free(p);
+			p = r;r = p->next;
+		}
+	}
+	free(p);free(*q);
+}
+
+bool QueueEmpty(LinkquNode** q)
+{
+	return ((*q)->rear == NULL);
+}
+
+bool enQueue(LinkquNode **q,int e)
+{
+	DataNode* p;
+	p = (DataNode*)malloc(sizeof(DataNode));
+	p->data=e;
+	p->next = NULL;
+	if ((*q)->rear==NULL)//当链队为空时，新结点是队首又是队尾
+	{
+		(*q)->front=(*q)->rear = p;
+		return true;
+	}
+	else
+	{
+		(*q)->rear->next = p;//在尾部插入
+		(*q)->rear = p;//使rear指向它
+		return true;
+	}
+}
+
+bool deQueue(LinkquNode** q, int* e)
+{
+	DataNode* t;
+	if ((*q)->rear == NULL)//链队空
+	{
+		return false;
+	}
+	t = (*q)->front;
+	if ((*q)->front == (*q)->rear)//只有一个结点
+	{
+		(*q)->front = (*q)->rear = NULL;
+	}
+	else//多个结点时
+	{
+		(*q)->front = (*q)->front->next;
+	}
+	*e = t->data;//取出e的值
+	free(t);
+	return true;
+}
+
+void display(LinkquNode** q)
+{
+	DataNode* p = (*q)->front;
+	while (p != NULL)
+	{
+		printf("%d ", p->data);
+		p = p->next;
+	}
+}
+
+int main()
+{
+	LinkquNode* q;int e;
+	initQueue(&q);
+	enQueue(&q, 271);enQueue(&q, 241);enQueue(&q, 2761);
+	enQueue(&q, 221);enQueue(&q, 31);enQueue(&q, 291);
+	display(&q);
+	printf("\n");
+	deQueue(&q, &e);
+	display(&q);
+	printf("取出了%d", e);
+	
+	return 0;
+}
