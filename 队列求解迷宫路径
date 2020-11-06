@@ -30,17 +30,18 @@ void initQueue(QuType** qu)
 	(*qu) = (QuType*)malloc(sizeof(QuType));
 	(*qu)->front = (*qu)->rear = -1;
 }
+
+void destory(QuType** qu)
+{
+	free(*qu);
+}
+
 bool enQueue(QuType** qu, Box e)
 {
 	if ((*qu)->rear == maxsize - 1)return false;
 	(*qu)->rear++;//队尾加1
 	(*qu)->data[(*qu)->rear] = e;//将Box类型数据放入队尾
 	return true;
-}
-
-void destory(QuType** qu)
-{
-	free(*qu);
 }
 
 bool deQueue(QuType** qu, Box* e)
