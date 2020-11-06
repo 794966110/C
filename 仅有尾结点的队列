@@ -1,0 +1,83 @@
+采用一个不带头结点只有一个尾结点指针rear的循环单链表存储队列，设计队列的初始化、进队和出队等算法。
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+typedef struct qNode
+{
+	int data;
+	struct qNode *next;
+}LinkList;
+
+void initQueue(LinkList **rear)
+{
+	(*rear)= (LinkList*)malloc(sizeof(LinkList));
+	(*rear) = NULL;
+}
+
+bool enQueue(LinkList** rear,int e)
+{
+	LinkList* p;LinkList *r;
+	p = (LinkList*)malloc(sizeof(LinkList));
+	if (p != NULL)
+	{
+		p->data = e;p->next = NULL;
+	}
+	if ((*rear) == NULL)//如果一开始队空
+	{
+		p->next = p;
+		(*rear)=p;
+	}
+	else 
+	{
+		p->next = (*rear)->next;//p指向首结点
+		(*rear)->next = p;//rear指向p
+		(*rear) = (*rear)->next;//rear后移
+	}
+	return true;
+}
+
+bool deQueue(LinkList** rear,int*e)
+{
+	LinkList* q;
+	if ((*rear) == NULL)//如果队空
+	{
+		return false;
+	}
+	else if((*rear)->next==(*rear))//如果队内只有一个结点
+	{
+		*e = (*rear)->data;
+		free(*rear);//释放
+		(*rear) = NULL;//置空
+	}
+	else//有多个结点
+	{
+		q = (*rear)->next;//q指向首结点
+		*e = q->data;//取出值
+		(*rear)->next = q->next;//指向自身
+		free(q);//释放
+	}
+	return true;
+}
+
+void display(LinkList** rear)
+{
+	LinkList* p = (*rear)->next;
+	while (p!=(*rear))
+	{
+		printf("%d ", p->data);
+		p = p->next;
+	}
+	printf("%d ", p->data);//输出rear
+}
+
+int main()
+{
+	LinkList* rear;
+	initQueue(&rear);
+	enQueue(&rear, 271);enQueue(&rear, 241);enQueue(&rear, 2761);
+	enQueue(&rear, 221);enQueue(&rear, 31);enQueue(&rear, 291);
+	display(&rear);
+	return 0;
+}
