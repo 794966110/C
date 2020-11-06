@@ -61,8 +61,7 @@ void print(QuType** qu, int front)
 {
 	while (front!=-1)//倒序输出迷宫路径
 	{
-		printf("(%d,%d) ", (*qu)->data[front].i,
-		(*qu)->data[front].j);
+		printf("(%d,%d) ", (*qu)->data[front].i,(*qu)->data[front].j);
 		front--;
 	}
 }
@@ -77,12 +76,12 @@ bool mgpath(int xi,int yi,int xe,int ye)
 	mg[xi][yi] = -1;//将出口赋值为-1，以避免回过来重复搜索
 	while (!QueueEmpty(&qu))
 	{
-		deQueue(&qu, &e);
-		i = e.i;j = e.j;
+		deQueue(&qu, &e);//将e出队
+		i = e.i;j = e.j;//将e内的值放入i,j
 		if (i == xe && j == ye)//找到了出口
 		{
-			print(&qu, qu->front);
-			destory(&qu);
+			print(&qu, qu->front);//将qu倒序输出
+			destory(&qu);//销毁
 			return true;
 		}
 		for (di = 0; di < 4;di++)
@@ -94,16 +93,16 @@ bool mgpath(int xi,int yi,int xe,int ye)
 			case 2:i1 = i+1;j1 = j;break;//往右移
 			case 3:i1 = i;j1 = j-1;break;//往下移
 			}
-			if (mg[i1][j1] == 0)
+			if (mg[i1][j1] == 0)//找到一个可走的方块
 			{
 				e.i = i1;e.j = j1;
-				e.pre = qu->front;
+				e.pre = qu->front;//储存qu的front
 				enQueue(&qu, e);//（i1,j1）进队
 				mg[i1][j1] = -1;//赋值为-1
 			}
 		}
 	}
-	destory(&qu);
+	destory(&qu);//销毁
 	return true;
 }
 
