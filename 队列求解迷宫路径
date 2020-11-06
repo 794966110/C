@@ -1,0 +1,115 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#define maxsize 50
+
+typedef struct
+{
+	int i;int j;//方块的位置
+	int pre;//本路径的上衣方块的下标
+}Box;//方块类型
+
+typedef struct
+{
+	Box data[maxsize];
+	int front, rear;//队头指针和队尾指针
+}QuType;//顺序队类型
+
+
+int mg[6][6] =   
+{ {1, 1, 1, 1, 1, 1},
+  {1, 0, 0, 0, 1, 1},
+  {1, 0, 1, 0, 0, 1},
+  {1, 0, 0, 0, 1, 1},
+  {1, 1, 0, 0, 0, 1},
+  {1, 1, 1, 1, 1, 1} };
+
+
+void initQueue(QuType** qu)
+{
+	(*qu) = (QuType*)malloc(sizeof(QuType));
+	(*qu)->front = (*qu)->rear = -1;
+}
+bool enQueue(QuType** qu, Box e)
+{
+	if ((*qu)->rear == maxsize - 1)return false;
+	(*qu)->rear++;//队尾加1
+	(*qu)->data[(*qu)->rear] = e;//将Box类型数据放入队尾
+	return true;
+}
+
+void destory(QuType** qu)
+{
+	free(*qu);
+}
+
+bool deQueue(QuType** qu, Box* e)
+{
+	if ((*qu)->front == (*qu)->rear) return false;
+	(*qu)->front++;
+	*e = (*qu)->data[(*qu)->front];
+	return true;
+}
+
+bool QueueEmpty(QuType** qu)
+{
+	return ((*qu)->front == (*qu)->rear);
+}
+
+void print(QuType** qu, int front)
+{
+	while (front!=-1)//倒序输出迷宫路径
+	{
+		printf("(%d,%d) ", (*qu)->data[front].i,
+		(*qu)->data[front].j);
+		front--;
+	}
+}
+
+bool mgpath(int xi,int yi,int xe,int ye)
+{
+	Box e;int i;int j;int di;int i1, j1;
+	QuType* qu;//顺序指针
+	initQueue(&qu);
+	e.i = xi;e.j = yi;e.pre = -1;//初始化入口
+	enQueue(&qu, e);//进队
+	mg[xi][yi] = -1;//将出口赋值为-1，以避免回过来重复搜索
+	while (!QueueEmpty(&qu))
+	{
+		deQueue(&qu, &e);
+		i = e.i;j = e.j;
+		if (i == xe && j == ye)//找到了出口
+		{
+			print(&qu, qu->front);
+			destory(&qu);
+			return true;
+		}
+		for (di = 0; di < 4;di++)
+		{
+			switch (di)
+			{
+			case 0:i1 = i - 1;j1 = j;break;//往左移
+			case 1:i1 = i;j1 = j+1;break;//往上移
+			case 2:i1 = i+1;j1 = j;break;//往右移
+			case 3:i1 = i;j1 = j-1;break;//往下移
+			}
+			if (mg[i1][j1] == 0)
+			{
+				e.i = i1;e.j = j1;
+				e.pre = qu->front;
+				enQueue(&qu, e);//（i1,j1）进队
+				mg[i1][j1] = -1;//赋值为-1
+			}
+		}
+	}
+	destory(&qu);
+	return true;
+}
+
+int main()
+{
+	
+	mgpath(1,1, 4, 4);
+
+	return 0;
+}
