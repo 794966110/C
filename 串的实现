@@ -1,0 +1,93 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+
+typedef struct snode
+{
+	char data;//用来储存字符串
+	struct snode* next;
+}LinkStrNode;
+
+void StrAssign(LinkStrNode **s,char cstr[])//生成串
+{
+	int i;
+	LinkStrNode* r, * p;
+	(*s) = (LinkStrNode*)malloc(sizeof(LinkStrNode));
+	r = (*s);//先将r指向s
+	for (i = 0;cstr[i] != '\0';i++)
+	{
+		p = (LinkStrNode*)malloc(sizeof(LinkStrNode));//p为新结点
+		if (p)
+		{
+			p->data = cstr[i];//p写入data
+		}
+		r->next = p;//r的next指向p
+		r = p;//r移到p的指向
+	}
+		r->next = NULL;//尾结点置空
+}
+
+void destory(LinkStrNode** s)//销毁串
+{
+	LinkStrNode* pre = (*s);LinkStrNode *p = pre->next;
+	while (p!=NULL)
+	{
+		free(pre);
+		pre = p;//pre后移
+		p = p->next;//p后移
+	}
+	free(pre);//释放掉指向最后一个结点的pre
+}
+
+LinkStrNode* Concat(LinkStrNode* s, LinkStrNode* t)//连接串
+{
+	LinkStrNode* str, * p = s->next, * q, * r;
+	str = (LinkStrNode*)malloc(sizeof(LinkStrNode));//申请一块新的内存空间
+	r = str;//r指向结果串的尾结点
+	while (p!=NULL)//用p扫描s的所有数据结点
+	{
+		q = (LinkStrNode*)malloc(sizeof(LinkStrNode));
+		if(q)	q->data = p->data;//将p复制到q
+		r->next = q;r = q;//连接str和q的首结点，r向后移
+		p = p->next;
+	}
+	p = t->next;//p指向t的next
+	while (p!=NULL)
+	{
+		q = (LinkStrNode*)malloc(sizeof(LinkStrNode));
+		if(q)q->data = p->data;
+		if(r)	r->next = q;r = q;
+		p = p->next;
+	}
+	if(r)	r->next = NULL;
+	return str;//返回新串
+}
+
+void display(LinkStrNode* s)//打印串
+{
+	LinkStrNode* p = s->next;//p指向s的首结点
+	while (p!=NULL)
+	{
+		printf("%c ", p->data);
+		p = p->next;//p后移
+	}
+	printf("\n");
+}
+
+int main()
+{
+	LinkStrNode *s;
+	char str[] = "abc";
+	StrAssign(&s, str);
+	display(s);
+	char str1[] = "efg";
+	LinkStrNode* s1;
+	StrAssign(&s1, str1);
+	LinkStrNode *Str;
+	Str=Concat(s,s1);
+	display(Str);
+
+	destory(&s);destory(&s1);destory(&Str);
+	return 0;
+}
