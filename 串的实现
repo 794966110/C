@@ -75,18 +75,38 @@ void display(LinkStrNode* s)//打印串
 	printf("\n");
 }
 
+void repl(LinkStrNode** s)//查找“ab”,替换为“xzy”
+{
+	LinkStrNode* p = (*s)->next;int find=0;
+	while (find==0&&p->next!=NULL)//未找到
+	{
+		if (p->data=='a'&&p->next->data=='b')
+			{
+			p->data = 'x';p->next->data = 'z';
+			LinkStrNode* q;
+			q = (LinkStrNode*)malloc(sizeof(LinkStrNode));
+			q->data = 'y';q->next = p->next;p->next = q;//再x和z中插入y
+			find = 1;
+			}
+		else
+		{
+			p = p->next;
+		}
+	}
+	
+}
+
 int main()
 {
-	LinkStrNode *s;
-	char str[] = "abc";
+	LinkStrNode *s;LinkStrNode* s1;LinkStrNode* Str;
+	char str[] = "abc";char str1[] = "efg";
 	StrAssign(&s, str);
 	display(s);
-	char str1[] = "efg";
-	LinkStrNode* s1;
 	StrAssign(&s1, str1);
-	LinkStrNode *Str;
 	Str=Concat(s,s1);
 	display(Str);
+	repl(&Str);//改写a、b
+	display(Str);//打印改写后的Str
 
 	destory(&s);destory(&s1);destory(&Str);
 	return 0;
