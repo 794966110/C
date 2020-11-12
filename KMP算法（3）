@@ -62,6 +62,29 @@ void Getnext(SqString** t, int next[])
 	}
 }
 
+//int KMPIndex(SqString **s,SqString**t)
+//{
+//	int i = 0, j = 0;int next[maxsize];int count = 0;
+//	Getnext(&(*t),next);
+//	while (i<(*s)->length&&j<(*t)->length)
+//	{
+//		if (j == -1 || (*s)->data[i] == (*t)->data[j])
+//		{
+//			i++;j++;
+//		}
+//		else
+//		{
+//			j = next[j];//i不变，j退回到next[j]（即模式串右滑）
+//		}
+//		if (j >= (*t)->length)
+//			{
+//				count++;//计数器加1
+//				j = 0;//j置空，重新匹配
+//			}
+//	}
+//	return count;
+//}
+
 int KMPIndex(SqString** s, SqString** t)
 {
 	int i = 0, j = 0;int next[maxsize];int count = 0;
@@ -73,7 +96,7 @@ int KMPIndex(SqString** s, SqString** t)
 		{
 			if ((*s)->data[i] == (*t)->data[j])
 			{
-				nextval[j] = nextval[i] = -1;
+				nextval[j] = nextval[i] = -1;//将相等的i、j都写成-1
 			}
 			i++;j++;
 		}
