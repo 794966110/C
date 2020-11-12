@@ -1,0 +1,102 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#define maxsize 50
+
+typedef struct snode
+{
+	char data[maxsize];//用来储存字符串
+	int length;//储存长度
+
+}SqString;
+
+void init(SqString** s)
+{
+	(*s) = (SqString*)malloc(sizeof(SqString));
+	(*s)->length = 0;
+}
+
+void StrAssign(SqString **s,char cstr[])
+{
+	int i;
+	for (i = 0;cstr[i] != '\0';i++)
+	{
+		(*s)->data[i] = cstr[i];//将cstr写入s
+	}
+	(*s)->length = i;
+}
+
+int index(SqString** s, SqString** t)
+{
+	int i, j, k;
+	for (i = 0;i < (*s)->length - (*t)->length;i++)
+	{
+		for (k = i, j = 0;k < (*s)->length && j < (*t)->length && (*s)->data[k] == (*t)->data[j];k++, j++)
+			if (j == (*t)->length)
+			{
+				return i;
+			}
+	}
+	return -1;
+}
+
+void destory(SqString** s)
+{
+	free(*s);
+}
+
+void Getnext(SqString** t, int next[])
+{
+	int j = 0, k = -1;next[0] = -1;
+	while (j < (*t)->length-1)
+	{
+		if (k == -1 || (*t)->data[k] == (*t)->data[j])
+		{
+			j++;k++;
+			next[j] = k;
+		}
+		else
+		{
+			k = next[k];
+		}
+	}
+}
+
+int KMPIndex(SqString** s, SqString** t)
+{
+	int i = 0, j = 0;int next[maxsize];int count = 0;
+	Getnext(&(*t), next);
+	int nextval[maxsize];
+	while (i < (*s)->length && j < (*t)->length)
+	{
+		if (j == -1 || (*s)->data[i] == (*t)->data[j])
+		{
+			if ((*s)->data[i] == (*t)->data[j])
+			{
+				nextval[j] = nextval[i] = -1;
+			}
+			i++;j++;
+		}
+		else
+		{
+			j = nextval[j];//i不变，j退回到next[j]（即模式串右滑）
+		}
+		if (j >= (*t)->length)
+		{
+			count++;//计数器加1
+			j = 0;//j置空，重新匹配
+		}
+	}
+	return count;
+}
+
+int main()
+{
+	int  next[maxsize];
+	SqString* s;init(&s);char s1[] = "aaaabcde";StrAssign(&s, s1);
+	SqString* t;init(&t);char t1[] = "aa";StrAssign(&t, t1);
+	//KMPIndex(&s, &t);
+	printf("%d\n", KMPIndex(&s, &t));
+
+	return 0;
+}
