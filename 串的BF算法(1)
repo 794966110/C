@@ -1,0 +1,61 @@
+/*Brute-Force简称为BF算法，亦称简单匹配算法。采用穷举的思路。BF是指暴力的意思！*/
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#define maxsize 50
+
+typedef struct snode
+{
+	int data[maxsize];
+	int length;
+}SqString;
+
+void init(SqString** s)
+{
+	(*s) = (SqString*)malloc(sizeof(SqString));
+	(*s)->length = 0;
+}
+
+void strassign(SqString** s,char cstr[])
+{
+	int i;
+	for (i = 0;cstr[i] != '\0';i++)
+	{
+		(*s)->data[i] = cstr[i];
+	}
+	(*s)->length = i;
+}
+
+int BF(SqString** s,SqString **t)
+{
+	int i=0;int j=0;
+		while (i< (*s)->length&&j<(*t)->length)
+		{
+			if ((*s)->data[i] == (*t)->data[j])
+			{
+				i++, j++;
+			}
+			else
+			{
+				i = i - j + 1;//主串从开头的下一个位置开始
+				j = 0;//字串从头开始
+			}
+		}
+		if (j >= (*t)->length)
+		{
+			return (i - (*t)->length);//匹配成功，返回第一个字符的下标
+		}
+		else
+		{
+			return -1;//匹配失败，返回-1
+		}
+}
+
+int main()
+{
+	SqString* s;init(&s);char s1[] = "abcabcabcd";strassign(&s, s1);
+	SqString* t;init(&t);char t1[] = "abcab";strassign(&t, t1);
+	printf("%d\n", BF(&s, &t));
+	return 0;
+}
