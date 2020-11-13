@@ -1,0 +1,78 @@
+/*利用KMP算法求t在s中出现的次数*/
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#define maxsize 50
+
+typedef struct snode
+{
+	int data[maxsize];
+	int length;
+}SqString;
+
+void init(SqString** s)
+{
+	(*s) = (SqString*)malloc(sizeof(SqString));
+	(*s)->length = 0;
+}
+
+void strassign(SqString** s,char cstr[])
+{
+	int i;
+	for (i = 0;cstr[i] != '\0';i++)
+	{
+		(*s)->data[i] = cstr[i];
+	}
+	(*s)->length = i;
+}
+
+void getnext(SqString** t,int next[])
+{
+	int	k = -1, j = 0;next[0] = -1;
+	while (j<(*t)->length)
+	{
+		if (k == -1 || (*t)->data[k] == (*t)->data[j])
+		{
+			k++;j++;
+			next[j] = k;
+		}
+		else//不匹配
+		{
+			k = next[k];
+		}
+	}
+	
+}
+
+int strcounter(SqString** s, SqString** t)//利用KMP算法求t在s中出现的次数
+{
+	int i = 0;int j = 0;int next[maxsize];int count = 0;
+	getnext(&(*t), next);
+	while (i < (*s)->length&&j<(*t)->length)
+	{
+		if (j == -1 || (*s)->data[i] == (*t)->data[j])
+		{
+			i++;j++;
+		}
+		else
+		{
+			j = next[j];
+		}
+		if (j>=(*t)->length)//j越界
+		{
+			count++;
+			j = next[j];//j回到已知重复段后一位
+		}
+	}
+	return count;
+}
+
+
+
+int main()
+{
+	SqString* s;init(&s);char s1[] = "abcabcabcd";strassign(&s, s1);
+	SqString* t;init(&t);char t1[] = "abcab";strassign(&t, t1);
+	printf("%d\n", KMP(&s, &t));
+	return 0;
+}
