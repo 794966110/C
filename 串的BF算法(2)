@@ -1,0 +1,56 @@
+/*BF算法求字串t在字符串s中出现的次数*/
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#define maxsize 50
+
+typedef struct snode
+{
+	int data[maxsize];
+	int length;
+}SqString;
+
+void init(SqString** s)
+{
+	(*s) = (SqString*)malloc(sizeof(SqString));
+	(*s)->length = 0;
+}
+
+void strassign(SqString** s,char cstr[])
+{
+	int i;
+	for (i = 0;cstr[i] != '\0';i++)
+	{
+		(*s)->data[i] = cstr[i];
+	}
+	(*s)->length = i;
+}
+
+int BF(SqString** s,SqString **t)
+{
+	int count = 0;int i=0;int j;int k;
+	
+	
+		for (i=0;i< (*s)->length-(*t)->length;i++)
+		{
+			for (k = i, j = 0;k<(*s)->length&&j<(*t)->length&&(*s)->data[k] == (*t)->data[j];)//相同
+			{
+				k++;j++;
+			}
+			
+			if (j == (*t)->length)
+			{
+				count++;//计数器加1
+			}
+		}
+	
+	return count;
+}
+
+int main()
+{
+	SqString* s;init(&s);char s1[] = "abcabcabcd";strassign(&s, s1);
+	SqString* t;init(&t);char t1[] = "abcab";strassign(&t, t1);
+	printf("%d\n", BF(&s, &t));
+	return 0;
+}
