@@ -1,3 +1,10 @@
+/*递归函数f(x，y)定义如下：
+  f(x，y)=f(x-1，y)+f(x，y-1) 当x>0且y>0
+  f(x，y)=x+y			否则
+则f(2，1)的值是（  D ）。
+  A.1	     B.2	 C.3      D.4
+  */
+
 #include<stdio.h>
 
 int fun(int x,int y)
