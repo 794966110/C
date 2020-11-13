@@ -1,0 +1,20 @@
+/*递归实现求x的n次方*/
+#include<stdio.h>
+
+double pow(double x, int n)
+{
+	if (n == 1)
+	{
+		return x;
+	}
+	else
+	{
+		return x * pow(x, n - 1);
+	}
+}
+
+int main()
+{
+	printf("%f\n", pow(2,3));
+	return 0;
+}
