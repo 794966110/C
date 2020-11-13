@@ -1,4 +1,3 @@
-/*利用KMP算法求t在s中出现的次数*/
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
@@ -73,6 +72,8 @@ int main()
 {
 	SqString* s;init(&s);char s1[] = "abcabcabcd";strassign(&s, s1);
 	SqString* t;init(&t);char t1[] = "abcab";strassign(&t, t1);
-	printf("%d\n", KMP(&s, &t));
+	printf("s:%s\n", s1);
+	printf("s:%s\n", t1);
+	printf("有%d个重复段\n", strcounter(&s, &t));
 	return 0;
 }
