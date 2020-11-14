@@ -1,0 +1,22 @@
+#include<stdio.h>
+
+void hanoi(int n,char x,char y,char z)//将x借助y移动到z上
+{
+	if (n == 1)
+	{
+		printf("将第%d个盘从%c移动%c\n", n, x, z);
+	}
+	else
+	{
+		hanoi(n - 1, x, z, y);//将x借助z移动到y上
+		printf("将第%d个盘从%c移动%c\n", n, x, z);
+		hanoi(n - 1, y, x, z);//将y借助x移动到z上
+	}
+}
+
+int main()
+{
+	char x='x', y='y', z='z';
+	hanoi(3,x, y, z);
+	return 0;
+}
