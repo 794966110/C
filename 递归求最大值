@@ -1,0 +1,28 @@
+#include<stdio.h>
+
+
+float f(float a[],int i,int j)
+{
+	float max1, max2, max, mid;
+	if ( i==j)//当i=j时，返回其值
+	{
+		return  a[i];
+	}
+	else
+	{
+		mid = (i + j) / 2;//不断地求中间位序
+		max1 = f(a, i, mid);
+		max2 = f(a, mid+1, j);
+		max = (max1 > max2) ? max1 : max2;
+
+	}
+	return max;
+}
+
+int main()
+{
+	float a[] = { 7,23,432,32,1,3432,2,326 };
+	
+	printf("%f\n", f(a,0,7));
+	return 0;
+}
