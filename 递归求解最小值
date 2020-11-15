@@ -1,0 +1,32 @@
+/*采用递归算法求实数数组A[0..n-1]中的最小值。*/
+#include<stdio.h>
+
+
+float f(float A[], int i)
+{
+	
+	float m=10000;
+	if (i == 0)//递归出口
+	{
+		return A[0];
+	}
+	else
+	{
+		m = f(A, i - 1);//未等于1时进栈
+		if (m > A[i])//出栈时m与A[i]比较，把更小的值赋给m
+		{
+			return A[i];
+		}
+		else
+		{
+			return m;//m向外递出
+		}
+	}
+}
+
+int main()
+{
+	float A[] = { 7,23,432,32,3432,2,326 };
+	printf("%f\n", f(A, 6));
+	return 0;
+}
