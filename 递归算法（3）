@@ -1,0 +1,26 @@
+/*求单链表结点数*/
+
+int count(Node *L)//带头结点
+{
+	if (L == NULL)
+	{
+		return -1;
+	}
+	else
+	{
+		return count(L->next)+1;
+	}
+}
+
+
+int count(Node *L)//不带头结点
+{
+	if (L == NULL)
+	{
+		return 0;
+	}
+	else
+	{
+		return count(L->next)+1;
+	}
+}
