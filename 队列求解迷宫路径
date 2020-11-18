@@ -5,18 +5,20 @@
 
 typedef struct
 {
-	int i;int j;//方块的位置
-	int pre;//本路径的上衣方块的下标
-}Box;//方块类型
+	int i;
+	int j;
+	int pre;//前驱结点的数组位序
+}Box;
 
 typedef struct
 {
 	Box data[maxsize];
-	int front, rear;//队头指针和队尾指针
-}QuType;//顺序队类型
+	int front;//头指针
+	int rear;//尾指针
+}sqQueue;//因为要将走过的路径保存起来，所以使用非循环队列
 
 
-int mg[6][6] =   
+int mg[6][6] = 
 { {1, 1, 1, 1, 1, 1},
   {1, 0, 0, 0, 1, 1},
   {1, 0, 1, 0, 0, 1},
@@ -25,91 +27,95 @@ int mg[6][6] =
   {1, 1, 1, 1, 1, 1} };
 
 
-void initQueue(QuType** qu)
+void init(sqQueue** s)
 {
-	(*qu) = (QuType*)malloc(sizeof(QuType));
-	(*qu)->front = (*qu)->rear = -1;
+	(*s) = (sqQueue*)malloc(sizeof(sqQueue));//申请一块内存空间
+	(*s)->front = (*s)->rear = -1;
 }
 
-void destory(QuType** qu)
+bool enQueue(sqQueue** s,Box e)
 {
-	free(*qu);
-}
-
-bool enQueue(QuType** qu, Box e)
-{
-	if ((*qu)->rear == maxsize - 1)return false;
-	(*qu)->rear++;//队尾加1
-	(*qu)->data[(*qu)->rear] = e;//将Box类型数据放入队尾
-	return true;
-}
-
-bool deQueue(QuType** qu, Box* e)
-{
-	if ((*qu)->front == (*qu)->rear) return false;
-	(*qu)->front++;
-	*e = (*qu)->data[(*qu)->front];
-	return true;
-}
-
-bool QueueEmpty(QuType** qu)
-{
-	return ((*qu)->front == (*qu)->rear);
-}
-
-void print(QuType** qu, int front)
-{
-	while (front!=-1)//倒序输出迷宫路径
+	if ((*s)->rear==maxsize-1)//队满
 	{
-		printf("(%d,%d) ", (*qu)->data[front].i,(*qu)->data[front].j);
-		front--;
+		return false;
 	}
+	(*s)->data[++((*s)->rear)]=e;//先加一后队栈
+	return true;
+}
+
+bool deQueue(sqQueue** s,Box *e)
+{
+	if ((*s)->front == (*s)->rear)//如果队空
+	{
+		return false;
+	}
+	*e=(*s)->data[++((*s)->front)];//front 后移，然后出队
+	return true;
+}
+
+bool empty(sqQueue** s)
+{
+	return ((*s)->front == (*s)->rear);
+}
+
+void destory(sqQueue** s)
+{
+	free(*s);
+}
+
+void print(sqQueue* s)
+{
+	while (s->front !=-1)//因为front前的位序才是储存了迷宫的路径，所以从后往前输出
+	{
+		printf("(%d,%d)",s->data[s->front].i,s->data[s->front].j);
+		s->front--;
+	}
+	
 }
 
 bool mgpath(int xi,int yi,int xe,int ye)
 {
-	Box e;int i;int j;int di;int i1, j1;
-	QuType* qu;//顺序指针
-	initQueue(&qu);
-	e.i = xi;e.j = yi;e.pre = -1;//初始化入口
-	enQueue(&qu, e);//进队
-	mg[xi][yi] = -1;//将出口赋值为-1，以避免回过来重复搜索
-	while (!QueueEmpty(&qu))
+	sqQueue* s;init(&s);
+	Box e;int i, j, i1, j1,di;//i,j临时保存出队的坐标;i1,j1用作探测下一步时的临时储存区
+	e.i = xi;e.j = yi;e.pre = -1;//首个pre=-1
+	enQueue(&s,e);
+	mg[xi][yi] = -1;
+	while (!empty(&s))
 	{
-		deQueue(&qu, &e);//将e出队
-		i = e.i;j = e.j;//将e内的值放入i,j
-		if (i == xe && j == ye)//找到了出口
+		deQueue(&s, &e);
+		i = e.i;j = e.j;//出队，进行探测
+		if (i == xe && j == ye)//找到出口
 		{
-			print(&qu, qu->front);//将qu倒序输出
-			destory(&qu);//销毁
+			print(s);//打印
+			destory(&s);//销毁
 			return true;
 		}
-		for (di = 0; di < 4;di++)
+		for (di=0;di<4;di++)//di表示下一步的方向
 		{
+			
 			switch (di)
 			{
-			case 0:i1 = i - 1;j1 = j;break;//往左移
-			case 1:i1 = i;j1 = j+1;break;//往上移
-			case 2:i1 = i+1;j1 = j;break;//往右移
-			case 3:i1 = i;j1 = j-1;break;//往下移
+			case 0:i1 = i - 1, j1 = j;break;//左移
+			case 1:i1 = i;j1 = j + 1;break;//上移
+			case 2:i1 = i + 1, j1 = j;break;//右移
+			case 3:i1 = i;j1 = j - 1;break;//下移
 			}
-			if (mg[i1][j1] == 0)//找到一个可走的方块
+			if (mg[i1][j1] == 0)//找到下一个方块
 			{
-				e.i = i1;e.j = j1;
-				e.pre = qu->front;//储存qu的front
-				enQueue(&qu, e);//（i1,j1）进队
-				mg[i1][j1] = -1;//赋值为-1
+				e.i = i1;e.j = j1;//将i1，j1放回e里
+				e.pre = s->front;//将front保存在pre中,0,1,2...
+				enQueue(&s, e);//e进队
+				mg[i1][j1] = -1;//走过的路径变为-1
 			}
 		}
+		
 	}
-	destory(&qu);//销毁
-	return true;
+	destory(&s);
+	return false;//未找到出口
 }
 
 int main()
-{
-	
-	mgpath(1,1, 4, 4);
-
+{	
+	mgpath(1, 1, 4, 4);
 	return 0;
 }
