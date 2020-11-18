@@ -2,25 +2,25 @@
 #include<stdlib.h>
 
 typedef struct LNode {
-	int date;
+	int data;
 	struct  LNode* next;
-}*LinkNode,Node;
+}*LinkNode, Node;
 
 void createlist1(LinkNode L, int a[], int n);
 void createlist1(LinkNode L, int a[], int n)
 {
 	LinkNode s;int i;
-	//L = (LinkNode)malloc(sizeof(Node));
+	
 	if (L)
 	{
-	L->next = NULL;
+		L->next = NULL;
 	}
-	
+
 	for (i = 0;i < n;i++)
 	{
 		s = (LinkNode)malloc(sizeof(Node));
 		if (s) {
-			s->date = a[i];
+			s->data = a[i];
 			s->next = L->next;
 			L->next = s;
 		}
@@ -31,7 +31,7 @@ void destory(LinkNode L)
 	free(L);
 }
 
-void listinsert(LinkNode L,int i,int e)
+void listinsert(LinkNode L, int i, int e)
 {
 	LinkNode s;
 	LinkNode p = L;
@@ -42,13 +42,39 @@ void listinsert(LinkNode L,int i,int e)
 	s = (LinkNode)malloc(sizeof(Node));
 	if (s)
 	{
-	s->next = NULL;
-	s->date = e;
-	s->next = p->next;
-	p->next = s;
+		s->next = NULL;
+		s->data = e;
+		s->next = p->next;
+		p->next = s;
 	}
-	
+
 }
+
+int count(Node *L)//递归计算单链表的结点数
+{
+	if (L == NULL)
+	{
+		return 0;
+	}
+	else
+	{
+		return count(L->next)+1;
+	}
+}
+
+void display(LinkNode L)//递归输出
+{
+	if (L == NULL)
+	{
+		return;
+	}
+	else
+	{
+		display(L->next);
+		printf("%d ", L->data);
+	}
+}
+
 int main()
 {
 	LinkNode head;
@@ -64,13 +90,17 @@ int main()
 	int a[] = { 1,2,3,4,5,6,7,8,9 };
 	int n = sizeof(a) / sizeof(int);
 	createlist1(head, a, n);
+	display(head->next);putchar('\n');
+	printf("%d\n", count(head->next));
 	listinsert(head, 10, 5);
 	n++;
-	for (int i = 0;i < n;i++)
+	/*for (int i = 0;i < n;i++)//常规输出
 	{
 		printf("%d ", head->next->date);
 		head = head->next;
-	}
+	}*/
+	display(head->next);putchar('\n');//递归输出
+	printf("%d\n", count(head->next));
 	destory(head);
 	return 0;
 }
