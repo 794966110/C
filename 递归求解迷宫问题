@@ -41,7 +41,7 @@ void destory(PathType** p)
 	free(*p);
 }
 
-void mgpath(int xi, int yi, int xe, int ye, PathType** path)
+void mgpath(int xi, int yi, int xe, int ye, PathType** path)//可输出全部路径
 {
 	int i, j;int di;int k;
 	if (xi == xe && yi == ye)//找到出口
