@@ -1,0 +1,90 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#define maxsize 50
+
+typedef struct
+{
+	int i;//行号
+	int j;//列号
+}Box;
+
+typedef struct
+{
+	Box data[maxsize];
+	int length;//路径长度
+}PathType;
+
+int mg[6][6] =
+{ {1, 1, 1, 1, 1, 1},
+  {1, 0, 0, 0, 1, 1},
+  {1, 0, 1, 0, 0, 1},
+  {1, 0, 0, 0, 1, 1},
+  {1, 1, 0, 0, 0, 1},
+  {1, 1, 1, 1, 1, 1} };
+
+void init(PathType** p)
+{
+	(*p) = (PathType*)malloc(sizeof(PathType));//分配内存空间
+	if(*p!=NULL)
+	(*p)->length = 0;//数组下标
+}
+
+
+int empty(PathType**p)
+{
+	return ((*p)->length == 0);
+}
+
+void destory(PathType** p)
+{
+	free(*p);
+}
+
+void mgpath(int xi, int yi, int xe, int ye, PathType** path)
+{
+	int i, j;int di;int k;
+	if (xi == xe && yi == ye)//找到出口
+	{
+		(*path)->data[(*path)->length].i = xi;//放入path
+		(*path)->data[(*path)->length].j = yi;
+		(*path)->length++;
+		for (k = 0;k < (*path)->length;k++)//输出
+		{
+			printf("(%d,%d)", (*path)->data[k].i, (*path)->data[k].j);
+		}
+		putchar('\n');
+	}
+	else//未到达终点
+	{
+		if (mg[xi][yi] == 0)//找到一个可走方块
+		{
+			for (di = 0;di < 4;di++)
+			{
+				switch (di)
+				{
+				case 0:i = xi - 1;j = yi;break;//左移
+				case 1:i = xi;j = yi + 1;break;//上移
+				case 2:i = xi + 1;j = yi;break;//右移
+				case 3:i = xi;j = yi - 1;break;//下移
+				}
+				(*path)->data[(*path)->length].i = xi;//将前一方块的坐标储存到path中
+				(*path)->data[(*path)->length].j = yi;
+				(*path)->length++;
+				mg[xi][yi] = -1;//设为-1防止返回
+				mgpath(i, j, xe, ye, &(*path));//i,j进入递归
+				(*path)->length--;//退回一个方块，寻找其他路径，di不再从0开始，而是上次进入递归的状态上继续加1
+				mg[xi][yi] = 0;//xi,yi变为可走
+			}
+		}
+	}	
+		
+}
+
+int main()
+{
+	PathType *path;init(&path);
+	mgpath(1, 1, 4, 4,&path);
+	destory(&path);//销毁
+	return 0;
+}
