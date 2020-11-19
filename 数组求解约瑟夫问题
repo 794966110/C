@@ -11,7 +11,7 @@
 #define maxsize 8
 
 
-void Queue(int n,int m)
+void josephus(int n,int m)
 {
 	int a[maxsize];int t=0,i,j;
 	for (int i = 0;i < n;i++)//初始化a[]
