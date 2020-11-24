@@ -1,0 +1,240 @@
+/*栈的应用：表达式转换及表达式求值*/
+#include<stdio.h>
+#include<stdlib.h>
+#define maxsize 15
+#define true 1
+#define false 0
+typedef int bool;
+
+typedef struct
+{
+	char data[maxsize];//栈内元素
+	int top;//栈顶
+}stack;//栈
+
+void initstack(stack** s)
+{
+	(*s) = (stack*)malloc(sizeof(stack));
+	if((*s))
+	(*s)->top = -1;
+}
+
+bool Push(stack **s,char e)//进栈
+{
+	if ((*s)->top == maxsize - 1)//对栈判满
+	{
+		return false;
+	}
+	else
+	{
+			(*s)->top++;
+			(*s)->data[(*s)->top] = e;
+			return true;
+		
+	}
+}
+
+bool getTop(stack* s,char *e)//取栈顶元素
+{
+	if (s->top == -1)
+	{
+		return false;
+	}
+	else
+	{
+		*e = s->data[s->top];
+		return true;
+	}
+}
+
+bool Pop(stack** s,char *e)//出栈
+{
+	if ((*s)->top == -1)//对栈判空
+	{
+		return false;
+	}
+	else
+	{
+		*e = (*s)->data[(*s)->top];
+		(*s)->top--;
+		return true;
+	}
+
+}
+
+bool Push2(stack** s, int e)//Push2用于存放compvlue函数中的数值
+{
+	if ((*s)->top == maxsize - 1)//对栈判满
+	{
+		return false;
+	}
+	else
+	{
+		(*s)->top++;
+		(*s)->data[(*s)->top] = e;
+		return true;
+
+	}
+}
+
+bool Pop2(stack** s, int* e)//Pop2用于存放compvlue函数中的数值
+{
+	if ((*s)->top == -1)//对栈判空
+	{
+		return false;
+	}
+	else
+	{
+		*e = (*s)->data[(*s)->top];
+		(*s)->top--;
+		return true;
+	}
+}
+
+bool stackempty(stack* s)//判断栈空
+{
+	return (s->top == -1);
+}
+
+void destory(stack** s)//销毁栈
+{
+	free((*s));
+}
+
+void trans(char *exp,char postexp[])//中缀转后缀
+{	
+	stack* Optr;
+	initstack(&Optr);
+	char e;int i = 0;
+	while (*exp != '\0')//当ch未扫描完,ch!='\0';
+	{
+		switch (*exp)
+		{
+		case '(':
+			Push(&Optr, *exp);//'('进栈
+			(exp++);
+			break;
+		case')':
+			Pop(&Optr, &e);//出栈
+			while (e!='(')//不是（，取出运算符
+			{
+				postexp[i++] = e;//放入postexp
+				Pop(&Optr, &e);//取出'('
+			}
+			(exp++);
+			break;
+		case'+':
+		case'-':
+			while (!stackempty(Optr)) 
+			{
+				getTop(Optr, &e);//取栈顶
+				if (e!='(')//e不是'('，*/+-
+				{
+					postexp[i++] = e;//进入后缀表达式
+					Pop(&Optr, &e);
+				}
+				else
+				{
+					break;//e是'('时退出循环，等待匹配到')'
+				}
+				Push(&Optr, *exp);//进栈
+				(exp++);
+				break;
+			}
+		case'*':
+		case'/':
+			while (!stackempty(Optr))
+			{
+				getTop(Optr, &e);//取栈顶
+				if (e == '*' || e == '/')//比较
+				{
+					postexp[i++] = e;//直接进入表达式
+					Pop(&Optr, &e);
+				}
+				else//e为非'*'或'/'时
+				{
+					break;
+				}
+			}
+			Push(&Optr, *exp);//将'*'或'/'进栈
+			(exp++);
+			break;
+		default:
+			while (*exp >= '0' && *exp <= '9')//数字
+			{
+				postexp[i++] = *exp;//直接进表达式
+				(exp++);
+			}
+			postexp[i++] = '#';//用于分隔数字
+		}
+	}
+	while (!stackempty(Optr))
+	{
+		Pop(&Optr, &e);
+		postexp[i++] = e;
+	}
+	postexp[i] = '\0';
+	destory(&Optr);
+}
+
+int comvalue(char postexp[])
+{
+	stack* Opnd;initstack(&Opnd);//Opnd栈用于存放待计算的数值和计算结果
+	int i = 0, sum;int a, b, c;int d;
+	while (postexp[i] != '\0')//当postexp未扫描完时
+	{
+		switch (postexp[i])
+		{
+		case '+':
+			Pop2(&Opnd, &a);
+			Pop2(&Opnd, &b);
+			c = b + a;
+			Push2(&Opnd, c);
+			break;
+		case '-':
+			Pop2(&Opnd, &a);//出栈两个数字
+			Pop2(&Opnd, &b);
+			c = b - a;
+			Push2(&Opnd, c);//数字进栈
+			break;
+		case '*':
+			Pop(&Opnd, &a);
+			Pop2(&Opnd, &b);
+			c = (b*a);
+			Push2(&Opnd, c);
+			break;
+		case '/':
+			Pop2(&Opnd, &a);
+			Pop2(&Opnd, &b);
+			c = b / a;
+			Push2(&Opnd, c);
+			break;
+		case '#'://跳过数字分隔符
+			break;
+		default:
+			d = 0;
+			while(postexp[i] - '0' >= 0 && postexp[i] - '0' <= 9)//如果#是个多位数
+			{
+				d = 10 * d + postexp[i] - '0';//数字字符转化为数值
+				i++;
+			}
+			Push2(&Opnd, d);//数值进栈
+			break;
+		}//switch   
+		i++;
+	}//while
+	Pop2(&Opnd, &sum);//取结果
+	destory(&Opnd);//销毁
+	return sum;
+}
+
+int main()
+{
+	char exp[] = "(1+2)*3";
+	char postexp[15];
+	trans(exp, postexp);
+	printf("中缀表达式：%s\n", exp);
+	printf("后缀表达式：%s\n", postexp);//1#2#+3#*
+	printf("该表达式的结果为：%d", comvalue(postexp));
+	return 0;
+}
