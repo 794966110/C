@@ -1,4 +1,4 @@
-/*栈的应用：表达式转换及表达式求值*/
+/*栈的应用：表达式转换及表达式求值，仅限正数表达式*/
 #include<stdio.h>
 #include<stdlib.h>
 #define maxsize 15
