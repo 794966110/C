@@ -72,7 +72,7 @@ BTNode *FindNdoe(BTNode* b, ElemType x)//在二叉树b中寻找data域值为x的
 	BTNode* p;
 	if (b == NULL)
 	{
-		return;
+		return NULL;
 	}
 	else if(b->data==x)//递归出口
 	{
