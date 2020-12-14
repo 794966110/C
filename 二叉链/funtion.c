@@ -392,6 +392,11 @@ int stackempty(stack* st)
 	return (st->top == -1);
 }
 
+void destorystack(stack** st)
+{
+	free(*st);
+}
+
 void preorder3(BTNode* b)//先序遍历（非递归栈实现）
 {
 	stack* st;initstack(&st);BTNode* p;
@@ -413,5 +418,50 @@ void preorder3(BTNode* b)//先序遍历（非递归栈实现）
 			}
 		}
 	}
-	//destory(&st);
+	destorystack(&st);//销栈
 }
+
+void preorder4(BTNode* b)//先序遍历，非递归栈实现
+{
+	BTNode* p = b;stack* st2;initstack(&st2);
+	while (!stackempty(st2)||p!=NULL)
+	{
+		while (p!=NULL)//先访问左下结点
+		{
+			printf("%c ", p->data);
+			push(&st2, &p);//进栈
+			p = p->lchild;
+		}
+
+		if (!stackempty(st2))
+		{
+			pop(&st2, &p);
+			p = p->rchild;//处理右子树
+		}
+	}
+	putchar('\n');
+	destorystack(&st2);
+}
+
+void inorder2(BTNode* b)//中序遍历，非递归
+{
+	BTNode* p;
+	p = b;
+	stack* st;initstack(&st);
+	while (!stackempty(st)||p!=NULL)
+	{
+		while (p!=NULL)
+		{
+			push(&st, &p);
+			p = p->lchild;
+		}
+	
+		if (!stackempty(st))
+		{
+			pop(&st, &p);
+			printf("%c ", p->data);
+			p = p->rchild;
+		}
+	}
+}
+
