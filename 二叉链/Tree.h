@@ -35,6 +35,6 @@ int level(BTNode* b, char x, int h);//先序遍历寻找x的层数h
 void Lnodenum(BTNode* b, int h, int k, int* n);//求二叉树b中第k层的结点个数
 int similar(BTNode* t1, BTNode* t2);//判断是否是相似的树
 int ancestor(BTNode* b, char x);//返回x的祖先结点
-
+void inorder2(BTNode* b);//中序遍历，非递归
 
 #endif 
